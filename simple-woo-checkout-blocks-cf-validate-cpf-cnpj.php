@@ -12,7 +12,7 @@
  * Requires PHP:         7.4
  * Update URI:           false
  * WC requires at least: 8.9
- * WC tested up to:      10.5
+ * WC tested up to:      10.8
  * Requires Plugins:     woocommerce, simple-woo-checkout-blocks-cf
  */
 
