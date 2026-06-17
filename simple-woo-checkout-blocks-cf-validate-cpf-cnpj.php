@@ -3,7 +3,7 @@
  * Plugin Name:          Simple Checkout Fields Manager for WooCommerce - Validate CPF/CNPJ
  * Plugin URI:
  * Description:          Validates CPF and CNPJ fields in the Simple Checkout Fields Manager for WooCommerce plugin
- * Version:              1.0
+ * Version:              1.1
  * Author:               Naked Cat Plugins (by Webdados)
  * Author URI:           https://nakedcatplugins.com
  * Text Domain:          simple-woo-checkout-blocks-cf-validate-cpf-cnpj
