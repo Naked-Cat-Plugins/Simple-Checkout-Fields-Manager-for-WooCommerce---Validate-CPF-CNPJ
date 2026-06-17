@@ -21,6 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Load plugin textdomain.
+add_action(
+	'init',
+	function () {
+		load_plugin_textdomain( 'simple-woo-checkout-blocks-cf-validate-cpf-cnpj', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+);
+
 // Add plugin initialization hook.
 add_action( 'woocommerce_init', 'swcbcf_init_validate_cpf_cnpj', 1 );
 
