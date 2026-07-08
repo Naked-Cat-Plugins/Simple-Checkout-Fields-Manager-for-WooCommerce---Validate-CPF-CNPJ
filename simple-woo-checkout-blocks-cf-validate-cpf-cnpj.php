@@ -3,7 +3,7 @@
  * Plugin Name:          Simple Checkout Fields Manager for WooCommerce - Validate CPF/CNPJ
  * Plugin URI:
  * Description:          Validates CPF and CNPJ fields in the Simple Checkout Fields Manager for WooCommerce plugin
- * Version:              1.1
+ * Version:              1.2
  * Author:               Naked Cat Plugins (by Webdados)
  * Author URI:           https://nakedcatplugins.com
  * Text Domain:          simple-woo-checkout-blocks-cf-validate-cpf-cnpj
@@ -12,7 +12,7 @@
  * Requires PHP:         7.4
  * Update URI:           false
  * WC requires at least: 8.9
- * WC tested up to:      10.8
+ * WC tested up to:      10.9
  * Requires Plugins:     woocommerce, simple-woo-checkout-blocks-cf
  */
 
@@ -82,10 +82,10 @@ function swcbcf_init_validate_cpf_cnpj() {
 		function ( $to_return, $value, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 			// Custom validation logic for CNPJ field.
-			$cnpj = preg_replace( '/[^0-9]/', '', $value );
+			$cnpj = strtoupper( preg_replace( '/[^0-9A-Za-z]/', '', $value ) );
 
-			if ( 14 !== strlen( $cnpj ) || preg_match( '/^([0-9])\1+$/', $cnpj ) ) {
-				return __( 'The CNPJ field is invalid: it does not have 14 digits', 'simple-woo-checkout-blocks-cf-validate-cpf-cnpj' );
+			if ( ! preg_match( '/^[0-9A-Z]{12}[0-9]{2}$/', $cnpj ) || preg_match( '/^(.)\1+$/', $cnpj ) ) {
+				return __( 'The CNPJ field is invalid: it does not have 14 characters', 'simple-woo-checkout-blocks-cf-validate-cpf-cnpj' );
 			}
 
 			$digit = substr( $cnpj, 0, 12 );
@@ -96,7 +96,7 @@ function swcbcf_init_validate_cpf_cnpj() {
 				$length = strlen( $digit );
 
 				for ( $i = 0; $i < $length; $i++ ) {
-					$sum += $weight * intval( $digit[ $i ] );
+					$sum += $weight * ( ord( $digit[ $i ] ) - 48 );
 
 					$weight--;
 

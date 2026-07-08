@@ -43,7 +43,7 @@ msgid "The CPF field is invalid: verification digits do not match"
 msgstr ""
 
 #: simple-woo-checkout-blocks-cf-validate-cpf-cnpj.php:80
-msgid "The CNPJ field is invalid: it does not have 14 digits"
+msgid "The CNPJ field is invalid: it does not have 14 characters"
 msgstr ""
 
 #: simple-woo-checkout-blocks-cf-validate-cpf-cnpj.php:105
