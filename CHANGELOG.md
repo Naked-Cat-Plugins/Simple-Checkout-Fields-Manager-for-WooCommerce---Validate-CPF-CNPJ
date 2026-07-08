@@ -1,4 +1,4 @@
-#### 2.0 - TBA
+#### 2.0 - 2026-07-08
 
 * Added live input masking for the CPF (`999.999.999-99`) and CNPJ (`XX.XXX.XXX/XXXX-99`) checkout fields, so formatting characters are shown while typing
 * Added a server-side cleanup step (hooking order processing) that strips mask punctuation from the stored CPF/CNPJ order meta, guaranteeing clean data regardless of what the browser sent

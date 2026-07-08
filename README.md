@@ -51,9 +51,9 @@ Examples of valid CNPJs accepted by this plugin:
 | Format | Example |
 |---|---|
 | Old (numeric) | `34.028.316/0001-03` |
-| New (alphanumeric) | `HJ.O82.XOF/KG96-18` |
-| New (alphanumeric) | `9D.U12.U2L/LHTW-05` |
-| New (alphanumeric, unformatted) | `CRGAJTTG6CK323` |
+| New (alphanumeric) | `WG.S8H.PX7/0001-60` |
+| New (alphanumeric) | `45.83Y.4V6/0001-63` |
+| New (alphanumeric, unformatted) | `LYM8H1GP000141` |
 
 ## Requirements
 
