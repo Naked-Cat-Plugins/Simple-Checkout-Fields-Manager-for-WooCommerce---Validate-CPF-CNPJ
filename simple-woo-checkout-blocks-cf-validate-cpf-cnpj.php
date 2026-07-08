@@ -162,7 +162,7 @@ function swcbcf_enqueue_mask_script() {
 		'swcbcf-mask-cpf-cnpj',
 		plugins_url( 'assets/js/mask-cpf-cnpj.js', __FILE__ ),
 		array(),
-		file_exists( $script_path ) ? (string) filemtime( $script_path ) : '1.3',
+		(string) filemtime( $script_path ),
 		true
 	);
 }
