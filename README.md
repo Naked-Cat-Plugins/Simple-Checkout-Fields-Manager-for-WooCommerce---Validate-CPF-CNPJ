@@ -14,20 +14,46 @@ The file `swcbcf-fields-cpf-cnpj.json` contains four ready-to-import contact fie
 |---|---|---|
 | Tipo de Pessoa | Select (Pessoa física / Pessoa jurídica) | When billing country = BR |
 | CPF | Text (11 digits) | When Tipo de Pessoa = Pessoa física |
-| CNPJ | Text (14 digits) | When Tipo de Pessoa = Pessoa jurídica |
+| CNPJ | Text (14 characters, alphanumeric) | When Tipo de Pessoa = Pessoa jurídica |
 | Inscrição Estadual | Text | When Tipo de Pessoa = Pessoa jurídica |
 
 Import this file once via the main plugin's **Tools → Import field definitions** tool. The fields will then appear on your WooCommerce Blocks checkout for Brazilian customers.
+
+> **Note:** these custom fields on the Blocks checkout do not currently support input masks. Customers must type the CPF/CNPJ **without** formatting symbols (`.`, `-`, `/`) — e.g. `86928278005` instead of `869.282.780-05`. Validation still accepts either way (see examples below), but nothing formats the value as the customer types it.
 
 **2. Server-side CPF and CNPJ validation**
 
 Once active, the plugin validates CPF and CNPJ values submitted at checkout:
 
-- Checks that the value has the correct number of digits (11 for CPF, 14 for CNPJ)
-- Rejects values made up of a single repeated digit (e.g. `00000000000`)
+- Checks that the value has the correct number of characters (11 for CPF, 14 for CNPJ)
+- Rejects values made up of a single repeated character (e.g. `00000000000`)
 - Verifies both check digits using the official Brazilian algorithm
 
 Validation errors are returned to the customer inline, preventing the order from being placed with an invalid tax ID.
+
+### CPF examples
+
+Examples of valid CPFs accepted by this plugin:
+
+| Format | Example |
+|---|---|
+| Formatted | `479.470.310-45` |
+| Unformatted | `86928278005` |
+
+### CNPJ format: old (numeric) and new (alphanumeric)
+
+Starting **July 2026**, Receita Federal allows the CNPJ base (the first 12 characters) to contain uppercase letters as well as digits; the last 2 check digits remain numeric. This is defined in [Ato Declaratório Executivo COCAD nº 141102](https://normasinternet2.receita.fazenda.gov.br/#/consulta/externa/141102).
+
+This plugin validates **both** formats — the previous all-numeric CNPJ and the new alphanumeric one — using the same official check-digit algorithm (each character's value is its ASCII code minus 48, so digits `0`-`9` give values `0`-`9` and letters `A`-`Z` give values `17`-`42`).
+
+Examples of valid CNPJs accepted by this plugin:
+
+| Format | Example |
+|---|---|
+| Old (numeric) | `34.028.316/0001-03` |
+| New (alphanumeric) | `HJ.O82.XOF/KG96-18` |
+| New (alphanumeric) | `9D.U12.U2L/LHTW-05` |
+| New (alphanumeric, unformatted) | `CRGAJTTG6CK323` |
 
 ## Requirements
 
@@ -44,7 +70,7 @@ Validation errors are returned to the customer inline, preventing the order from
 
 ## Further reading
 
-See the accompanying blog post (in Brazilian Portuguese) for a step-by-step walkthrough:
+See the accompanying blog post (in Brazilian Portuguese and English) for a step-by-step walkthrough:
 
 [Como adicionar os campos de Pessoa Jurídica, CPF, CNPJ, e Inscrição Estadual no checkout de blocos do WooCommerce](https://nakedcatplugins.com/adicionar-campos-pessoa-juridica-cpf-cnpj-inscricao-estadual-checkout-blocos-woocommerce/)
 
