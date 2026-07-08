@@ -19,7 +19,7 @@ The file `swcbcf-fields-cpf-cnpj.json` contains four ready-to-import contact fie
 
 Import this file once via the main plugin's **Tools → Import field definitions** tool. The fields will then appear on your WooCommerce Blocks checkout for Brazilian customers.
 
-> **Note:** these custom fields on the Blocks checkout do not currently support input masks. Customers must type the CPF/CNPJ **without** formatting symbols (`.`, `-`, `/`) — e.g. `86928278005` instead of `869.282.780-05`. Validation still accepts either way (see examples below), but nothing formats the value as the customer types it.
+This plugin also adds live input masking to the CPF (`999.999.999-99`) and CNPJ (`XX.XXX.XXX/XXXX-99`) fields on the Blocks checkout, so customers see the formatting characters as they type. Either formatted or unformatted input is accepted (see examples below); the order is always stored with the punctuation stripped, regardless of what was typed or pasted.
 
 **2. Server-side CPF and CNPJ validation**
 
