@@ -28,3 +28,6 @@ webpack.config.js
 createzip.command
 
 # Other files specific to the plugin
+README.md
+CHANGELOG.md
+swcbcf-fields-cpf-cnpj.json
