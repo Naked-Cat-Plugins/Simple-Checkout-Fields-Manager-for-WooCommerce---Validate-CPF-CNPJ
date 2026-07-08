@@ -143,15 +143,8 @@ add_action( 'wp_enqueue_scripts', 'swcbcf_enqueue_mask_script' );
 
 /**
  * Enqueues the live input mask script on the checkout page.
- *
- * Experimental: disabled by default. Enable with:
- * add_filter( 'swcbcf_enable_cpf_cnpj_input_mask', '__return_true' );
  */
 function swcbcf_enqueue_mask_script() {
-	if ( ! apply_filters( 'swcbcf_enable_cpf_cnpj_input_mask', false ) ) {
-		return;
-	}
-
 	if ( ! is_checkout() || ! has_block( 'woocommerce/checkout' ) ) {
 		return;
 	}
@@ -174,16 +167,9 @@ add_action( 'woocommerce_store_api_checkout_order_processed', 'swcbcf_sanitize_c
  * Ensures CPF/CNPJ order meta is stored free of mask punctuation, independent
  * of whether the client-side masking ran/succeeded.
  *
- * Experimental: disabled by default. Enable with:
- * add_filter( 'swcbcf_enable_cpf_cnpj_input_mask', '__return_true' );
- *
  * @param WC_Order $order Order object.
  */
 function swcbcf_sanitize_cpf_cnpj_order_meta( $order ) {
-	if ( ! apply_filters( 'swcbcf_enable_cpf_cnpj_input_mask', false ) ) {
-		return;
-	}
-
 	if ( ! $order instanceof WC_Order ) {
 		return;
 	}

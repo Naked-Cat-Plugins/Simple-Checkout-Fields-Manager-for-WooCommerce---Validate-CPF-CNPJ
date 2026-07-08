@@ -19,7 +19,7 @@ The file `swcbcf-fields-cpf-cnpj.json` contains four ready-to-import contact fie
 
 Import this file once via the main plugin's **Tools → Import field definitions** tool. The fields will then appear on your WooCommerce Blocks checkout for Brazilian customers.
 
-> **Note:** this plugin can optionally add live input masking to the CPF (`999.999.999-99`) and CNPJ (`XX.XXX.XXX/XXXX-99`) fields on the Blocks checkout, so customers see the formatting characters as they type. This is an **experimental, opt-in** feature — see [Experimental: input masking](#experimental-input-masking) below. Either formatted or unformatted input is always accepted by validation (see examples below); when masking is enabled, the order is stored with the punctuation stripped, regardless of what was typed or pasted.
+This plugin also adds live input masking to the CPF (`999.999.999-99`) and CNPJ (`XX.XXX.XXX/XXXX-99`) fields on the Blocks checkout, so customers see the formatting characters as they type. Either formatted or unformatted input is accepted (see examples below); the order is always stored with the punctuation stripped, regardless of what was typed or pasted.
 
 **2. Server-side CPF and CNPJ validation**
 
@@ -54,21 +54,6 @@ Examples of valid CNPJs accepted by this plugin:
 | New (alphanumeric) | `HJ.O82.XOF/KG96-18` |
 | New (alphanumeric) | `9D.U12.U2L/LHTW-05` |
 | New (alphanumeric, unformatted) | `CRGAJTTG6CK323` |
-
-## Experimental: input masking
-
-Live input masking (formatted display while typing) and the matching order-meta cleanup are **disabled by default** and considered experimental. Enable them by adding this to a theme's `functions.php` or a small site-specific plugin:
-
-```php
-add_filter( 'swcbcf_enable_cpf_cnpj_input_mask', '__return_true' );
-```
-
-When enabled, this activates two things together:
-
-- The live mask on the CPF/CNPJ fields on the Blocks checkout (`assets/js/mask-cpf-cnpj.js`).
-- A cleanup step, hooked into order processing, that strips mask punctuation from the stored `_wc_other/swcbcf/cpf` and `_wc_other/swcbcf/cnpj` order meta — so the database always ends up with a clean, unformatted value regardless of what was typed, pasted, or masked in the browser.
-
-Both are controlled by the same filter, so there's no risk of the visual mask being on while the order-meta cleanup is off (or vice versa).
 
 ## Requirements
 
