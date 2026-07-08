@@ -33,6 +33,24 @@ add_action(
 add_action( 'woocommerce_init', 'swcbcf_init_validate_cpf_cnpj', 1 );
 
 /**
+ * Strips a CPF value down to its raw digits.
+ *
+ * @param mixed $value Raw field value.
+ */
+function swcbcf_clean_cpf( $value ) {
+	return preg_replace( '/[^0-9]/', '', (string) $value );
+}
+
+/**
+ * Strips a CNPJ value down to its raw (uppercased) alphanumeric characters.
+ *
+ * @param mixed $value Raw field value.
+ */
+function swcbcf_clean_cnpj( $value ) {
+	return strtoupper( preg_replace( '/[^0-9A-Za-z]/', '', (string) $value ) );
+}
+
+/**
  * Plugin initialization function.
  */
 function swcbcf_init_validate_cpf_cnpj() {
@@ -43,7 +61,7 @@ function swcbcf_init_validate_cpf_cnpj() {
 		function ( $to_return, $value, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 			// Custom validation logic for CPF field
-			$cpf = preg_replace( '/[^0-9]/', '', $value );
+			$cpf = swcbcf_clean_cpf( $value );
 
 			if ( 11 !== strlen( $cpf ) || preg_match( '/^([0-9])\1+$/', $cpf ) ) {
 				return __( 'The CPF field is invalid: it does not have 11 digits', 'simple-woo-checkout-blocks-cf-validate-cpf-cnpj' );
@@ -82,7 +100,7 @@ function swcbcf_init_validate_cpf_cnpj() {
 		function ( $to_return, $value, $field ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 			// Custom validation logic for CNPJ field.
-			$cnpj = strtoupper( preg_replace( '/[^0-9A-Za-z]/', '', $value ) );
+			$cnpj = swcbcf_clean_cnpj( $value );
 
 			if ( ! preg_match( '/^[0-9A-Z]{12}[0-9]{2}$/', $cnpj ) || preg_match( '/^(.)\1+$/', $cnpj ) ) {
 				return __( 'The CNPJ field is invalid: it does not have 14 characters', 'simple-woo-checkout-blocks-cf-validate-cpf-cnpj' );
@@ -118,6 +136,83 @@ function swcbcf_init_validate_cpf_cnpj() {
 		10,
 		3
 	);
+}
+
+// Enqueue the CPF/CNPJ input mask script on the Blocks checkout.
+add_action( 'wp_enqueue_scripts', 'swcbcf_enqueue_mask_script' );
+
+/**
+ * Enqueues the live input mask script on the checkout page.
+ *
+ * Experimental: disabled by default. Enable with:
+ * add_filter( 'swcbcf_enable_cpf_cnpj_input_mask', '__return_true' );
+ */
+function swcbcf_enqueue_mask_script() {
+	if ( ! apply_filters( 'swcbcf_enable_cpf_cnpj_input_mask', false ) ) {
+		return;
+	}
+
+	if ( ! is_checkout() || ! has_block( 'woocommerce/checkout' ) ) {
+		return;
+	}
+
+	$script_path = plugin_dir_path( __FILE__ ) . 'assets/js/mask-cpf-cnpj.js';
+
+	wp_enqueue_script(
+		'swcbcf-mask-cpf-cnpj',
+		plugins_url( 'assets/js/mask-cpf-cnpj.js', __FILE__ ),
+		array(),
+		file_exists( $script_path ) ? (string) filemtime( $script_path ) : '1.3',
+		true
+	);
+}
+
+// Clean up CPF/CNPJ order meta after checkout, regardless of what the browser sent.
+add_action( 'woocommerce_store_api_checkout_order_processed', 'swcbcf_sanitize_cpf_cnpj_order_meta' );
+
+/**
+ * Ensures CPF/CNPJ order meta is stored free of mask punctuation, independent
+ * of whether the client-side masking ran/succeeded.
+ *
+ * Experimental: disabled by default. Enable with:
+ * add_filter( 'swcbcf_enable_cpf_cnpj_input_mask', '__return_true' );
+ *
+ * @param WC_Order $order Order object.
+ */
+function swcbcf_sanitize_cpf_cnpj_order_meta( $order ) {
+	if ( ! apply_filters( 'swcbcf_enable_cpf_cnpj_input_mask', false ) ) {
+		return;
+	}
+
+	if ( ! $order instanceof WC_Order ) {
+		return;
+	}
+
+	$fields = array(
+		'_wc_other/swcbcf/cpf'  => 'swcbcf_clean_cpf',
+		'_wc_other/swcbcf/cnpj' => 'swcbcf_clean_cnpj',
+	);
+
+	$dirty = false;
+
+	foreach ( $fields as $meta_key => $cleaner ) {
+		$raw = $order->get_meta( $meta_key, true );
+
+		if ( '' === $raw || null === $raw ) {
+			continue;
+		}
+
+		$clean = call_user_func( $cleaner, $raw );
+
+		if ( $clean !== $raw ) {
+			$order->update_meta_data( $meta_key, $clean );
+			$dirty = true;
+		}
+	}
+
+	if ( $dirty ) {
+		$order->save();
+	}
 }
 
 /**
